@@ -1,0 +1,17 @@
+Package: MAGOS
+Type: Package
+Title: Model-based Adaptive Grouping of Subclones 
+Version: 0.2.0
+Author: Navid Ahmadinejad
+Maintainer: Navid Ahmadinejad <navidfr@asu.edu>
+Description: This package aims to provide tools for clustering 
+    SNPs and find clones and subclones of a tumor sample(s). 
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+Imports:
+  dplyr,
+  igraph,
+  plyr,
+  Matrix
+RoxygenNote: 7.0.2
