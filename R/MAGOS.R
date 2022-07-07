@@ -1,10 +1,11 @@
-### April 2020. mag.multiple.run with fold uploaded to GIT
+### April 2020.
+#Added mag.multiple.run with fold
 #mag.exp.var.v3....comment edep=mean(edep.vec)...
 
 ### packages:
-# library(igraph)
-# library(dplyr)
-# library(Matrix)
+library(igraph)
+library(dplyr)
+library(Matrix)
 
 
 mag.dist.v3<- function(vafs, depths){
@@ -21,19 +22,19 @@ mag.dist.v3<- function(vafs, depths){
   #R<- dbeta(vafs, shape1=s1, shape2=s2, log=T)
   R <-c(dbeta(vafs[vafs!=0.001], shape1=s1, shape2=s2, log=T),
         dbeta(vafs[vafs==0.001], shape1=s1, shape2=s2, log=T)) #log should be F- because if Log=T we could have positive and negative values. We should add log
- #mean(R)
+  #mean(R)
   #plot(c(vafs[vafs!=0.001], vafs[vafs==0.001]),R)
   #rbind(vafs[vafs!=0.001], R[1:58])
   #dbeta(vafs, shape1=s1, shape2=s2, log=T)
   #v<- mad(vafs, center=mean(vaf.test), constant = 1)
   v<-sum((vafs-vaf)^2)/length(vafs)
-  v<- sqrt(v)
+  #v<- sqrt(v)
   range<- max(vafs)-min(vafs)
   #range<- sqrt(range)
   #range<- range^2
- #cat(v, ' ',range,' ',v*range,'\n')
- #print(range)
- #print(v*range)
+  #cat(v, ' ',range,' ',v*range,'\n')
+  #print(range)
+  #print(v*range)
   v <- ifelse(v<0.0005, 0.0005, v)
   range<- ifelse(range<0.005,0.005,range)
 
@@ -50,6 +51,8 @@ mag.dist.v3<- function(vafs, depths){
   #print(paste(results, 'end'))
   return(results)
 }
+
+
 
 #mARCH 1st
 fit.elements.reduce.v3<- function(elements,vaf.data){#, depth.data){
@@ -79,7 +82,6 @@ fit.elements.reduce.v3<- function(elements,vaf.data){#, depth.data){
   #return(result[which.max(result[,'dist']), c('dist', 's1')])
   return(max(result))
 }
-
 fit.elements.v3<- function(elements,vaf.data, depth.data){
   #  fit.obj<- c()
   # fit.minval<- c()
@@ -105,7 +107,6 @@ fit.elements.v3<- function(elements,vaf.data, depth.data){
   #return(c(max(dist.val),dist.shape[which.max(dist.val)]))
   return(result[which.max(result[,'dist']), c('dist', 's1')])
 }
-
 get.var.v3.1 <-function(x, x.nb, s) {
   x.nb<- x.nb[as.logical(x)]
   a <- mean(x.nb);
@@ -114,46 +115,14 @@ get.var.v3.1 <-function(x, x.nb, s) {
   d <- s;
   return(c(a, b, c, d));
 }
-###used in cut-off:
-mag.exp.var.v2.1<-function(efrq, edep.vec, num, n=1000){
+mag.exp.var.v3<-function(efrq.vec, edep.vec, num, n=500, type='M'){
   expt.var<-c()
   depth.keep<- c()
   vafs<- c()
   #depth.range<- max(edep.vec)-min(edep.vec)
   #if(sd(edep.vec)<10){edep.vec<- mean(edep.vec)}
-  #print(length(edep.vec))
-  if(length(edep.vec)>50){
-      edep.vec<- edep.vec[edep.vec>=quantile(edep.vec,0.15)&
-                            edep.vec<=quantile(edep.vec,0.85)]
-  } else {
-      edep.vec<-c(mean(edep.vec), mean(edep.vec))
-  }
-  #print('asjdahskdjhasjkd')
-  #print(length(edep.vec))
-  for(i in 1:n){
-  edep<- sample(edep.vec,1, replace=T)
-  s1<-efrq*edep
-  s2<-(1-efrq)*edep
-    x<-rbeta(num,shape1 = s1,shape2 = s2)
-    #hist(x, 50)
-    #var(x)
-    vafs<- c(vafs, s1/(s1+s2))
-    expt.var<- c(expt.var, var(x))
-    depth.keep<- c(depth.keep, edep)
-    i<-i+1
-  }
-  return(list(exp.vat=(expt.var), depths=depth.keep, vafs=vafs))
-}
-### added frq.vec
-#### MAY 2019::::--------------------------------------------------------------------------------BEST ON LOW COVERAGE CELL andd HIGH COVERAGE CELL
-mag.exp.var.v3<-function(efrq.vec, edep.vec, num, n=1000, type='M'){
-  expt.var<-c()
-  depth.keep<- c()
-  vafs<- c()
-  #depth.range<- max(edep.vec)-min(edep.vec)
-  #if(sd(edep.vec)<10){edep.vec<- mean(edep.vec)}
-  a<-quantile(edep.vec,0.05)
-  b<-quantile(edep.vec,0.95)
+  a<-quantile(edep.vec,0.1)
+  b<-quantile(edep.vec,0.9)
   lowerf.1 <- quantile(efrq.vec,0.15)
   higherf.1 <- quantile(efrq.vec,0.85);
 
@@ -174,7 +143,7 @@ mag.exp.var.v3<-function(efrq.vec, edep.vec, num, n=1000, type='M'){
   #print(length(edep.vec))
   for(i in 1:n){
     edep<- sample(edep.vec,1, replace=T)
-    edep=mean(edep.vec)
+    #edep=mean(edep.vec)
     #efrq<- sample((efrq.vec),1, replace=T)
     efrq<- mean(efrq.vec)
     s1<-efrq*edep
@@ -191,18 +160,9 @@ mag.exp.var.v3<-function(efrq.vec, edep.vec, num, n=1000, type='M'){
 }
 
 
+########################################
+########################################          Prep data and other functions
 
-
-#' MAG data preparation
-#'
-#' This function preprocesses the input data for the main algorithm.
-#'
-#' @param arg.data Dataframe of the samples. Each column pairs correspond to reference and alternate counts. Column 1 and 2 for sample 1, column 3 and 4 for sample 2 and ...
-#'
-#'
-#' @return Returns a dataframe with processed data and ID.
-#'
-#' @export
 mag.prepdata<- function(arg.data){
   num<- dim(arg.data)[2]/2   # number of samples.     ### in the format of ref, alt, ref, alt
   cat('Number of samples: ', num)
@@ -244,20 +204,12 @@ mag.prepdata<- function(arg.data){
 
 
 
-### MAG MULTIPLE
-#' MAG REDUCE STEP
-#'
-#' This function is used to create a pre clustering merging of the data. This function is used to merge data points that are close to each other using a graph approach.
-#'
-#' @param prep.data Preproccessed dataframe of the data.
-#' @param x.el A dataframe of samples that want to be forced together. Each row coresponds to a cluster and each column represents a data point (mutation). This is a 0-1 matrix.
-#'    Sum of each column should be 1 and sum of each row should be number of mutations in that cluster. At step 0, where each mutation is a cluster, this dataframe is a m*m matrix with 1s on the diagonal. The default is an empty dataframe but the function populates this dataframe.
-#' @param threshold This parameter is used to merge mutations that their VAF difference is less than the threshold. Default is 0.03. Meaning in the reduce step, in order to speed up the process, the mutations that their max VAF distance is 0.03 are merged together.
-#' @param n This variable is used internaly. Do not change it.
-#'
-#' @return A list of files. x.el.red is the main output of the function. It is the update dataframe of clusters and mutations after performing the initial merging.
-#'
-#' @export
+
+
+########################################
+########################################          MAG Multiple V3.1
+
+
 mag.reduce.graph<-function(prep.data,x.el=matrix(), n=-100, threshold=0.03){
 
   time0<- as.numeric(Sys.time())
@@ -455,7 +407,7 @@ mag.reduce.graph<-function(prep.data,x.el=matrix(), n=-100, threshold=0.03){
   results<- list(x.el.red=x.el.final, vaf.data=vaf.data,vaf.sorted=vaf.sorted,
                  depth.data=depth.data,depth.sorted=depth.sorted);
   nn <- nrow(results$x.el.red)
-  #print("nn")
+  print("nn")
   print(nn)
   time1<- as.numeric(Sys.time())
   print('TIME:')
@@ -476,14 +428,7 @@ mag.reduce.graph<-function(prep.data,x.el=matrix(), n=-100, threshold=0.03){
 
 
 
-#' MAG Multiple Sample Clustering
-#'
-#' This function performs clustering on multiple samples with the focus of one main sample.
-#'
-#' @param prep.data Preproccessed dataframe of the data.
-#' @param x.el.cut Is the x.el.red from the mag.reduce.graph(). This can also be empty.
-#'
-#' @export
+### added okay calculation to mag.mult; Also, added the first x.el to x.el.list as the first element, so s should start from 2.
 mag.multiple<- function(prep.data,x.el.cut=data.frame()) {
 
 
@@ -566,7 +511,6 @@ mag.multiple<- function(prep.data,x.el.cut=data.frame()) {
   time2 <- as.numeric(Sys.time())
   cat('took ', time2-time1, ' seconds.\n'); flush.console();
 
-  print('inja')
   tempMatLoop<-Matrix(1000000, nrow=l, ncol=l, sparse = T)  #may 6th   DEC 2018: added sparse
   tempMatLoop.2<-lower.tri(diag(1000000, nrow=l, ncol=l))
   tempMatLoop[tempMatLoop.2] <- initial.1[1, ]
@@ -629,11 +573,11 @@ mag.multiple<- function(prep.data,x.el.cut=data.frame()) {
 
     x1 <- x.elements[1:(nrow(x.elements)-1), ,drop=F]
     x2 <- x.elements[nrow(x.elements), , drop=F]   #the ones that are put together
-    #print('here')
-    #dim(x.elements)
-    #print(dim(x1))
-    #print(dim(x2))
-    #print('there')
+    print('here')
+    dim(x.elements)
+    print(dim(x1))
+    print(dim(x2))
+    print('there')
     #fit.between <- t(apply(x1, 1, fit.elements.weight, element.2=x2,
     #                      arg.data=x.loop, arg.data.other=arg.data.other))
 
@@ -682,11 +626,11 @@ mag.multiple<- function(prep.data,x.el.cut=data.frame()) {
 }
 
 
-#' MAG var
-#'
-#' This function finds the mean and variance of each clustering step in all the other samples.
-#'
-#' @export
+
+
+
+
+###Updated SEP2019: okay calculation from MAG
 mag.var<- function(mag.out){
 
   #varmean is geneated based on sorted data
@@ -758,10 +702,10 @@ mag.var<- function(mag.out){
 
 
 
-#' Find cut off- multiple sample.
-#'
-#' Finding the cut off of the multiple sample clustering.
-#' @export
+####add all depths:
+
+
+### UPDATED PROBABILIES.
 cut.off.multiple  <-function(mag.var){
   time0 <- as.numeric(Sys.time())
   #var.mean <- mag.output$var.mean
@@ -781,11 +725,7 @@ cut.off.multiple  <-function(mag.var){
   }
   names(mag.var.list)<- names(mag.var$var.mean.all)
   x.el.list<- mag.var$mag.out$x.el
-  #var.mean <- data.frame(var.mean, row.names = NULL)
-  #var.mean[is.na(var.mean)] <- 0
-  #var.mean.first <- var.mean
-  #var.mean$var <- round(var.mean$var, 6)
-  #var.mean$var <- var.mean$var + 1e-7
+
 
   flag <- FALSE
   m <- c()
@@ -802,7 +742,7 @@ cut.off.multiple  <-function(mag.var){
   temp.mv <- c(); temp.points <- c(); temp.step <- c();temp.point.step <- c();
 
   while(flag == FALSE){
-   # print(i); flush.console();
+    print(i); flush.console();
     ############
     ## I need to use x.el to get the breaks, because using StepI would cause problem
     ## in identical clusters and mutations.
@@ -834,7 +774,7 @@ cut.off.multiple  <-function(mag.var){
         #stepII.breaks <- setdiff(stepII[,-c(4,6)], stepI[,-c(4,6)])
         stepII.breaks <- dplyr::setdiff(stepII[,-4], stepI[,-4])
         if(nrow(stepII.breaks)==1){
-         # print("why did this happen????")
+          # print("why did this happen????")
           stepII.breaks <- rbind(stepII.breaks, stepII.breaks)
         }
         stepII.num <- unique(stepII[, 4])
@@ -845,16 +785,6 @@ cut.off.multiple  <-function(mag.var){
           #sample.sim <- cluster.sim(edep=depth, efrq=stepII.breaks[ii,1], shape=shape, n=10000)
           var.sim <- c()
           size <- ifelse(stepII.breaks$NumberOfPoints[ii]<5, 5, stepII.breaks$NumberOfPoints[ii])
-          # for(j in 1:500){
-          #   sample.sim.2 <- sample.sim[sample(1:10000, size=size),]   #temp[1,3]
-          #   var.sim <- c(var.sim, sd(sample.sim.2[, 4])) # }
-
-
-          #Feb13
-          #var.sim<- mag.exp.var.v2(efrq = stepII.breaks[ii,1], edep =stepII.breaks[ii,'depth'], num=size)
-
-         # print('look at here')
-         # print(i); print(j); print(ii)
           depth.vec<-depths.data[depths.data$ID%in%names(stepII.breaks.x.el[ii,as.logical(stepII.breaks.x.el[ii,]),drop=F]),j]
 
           vaf.vec<-vafs.data[vafs.data$ID%in%names(stepII.breaks.x.el[ii,as.logical(stepII.breaks.x.el[ii,]),drop=F]),j]
@@ -862,8 +792,8 @@ cut.off.multiple  <-function(mag.var){
           #var.sim<- mag.exp.var.v2.1(efrq = stepII.breaks[ii,1], edep.vec =depth.vec , num=size)
           #var.sim<- var.sim$exp.vat
 
-          if(mean(depth.vec)>150){type<-'H'}
-          if(mean(depth.vec)<=150){type<-'M'}
+          if(mean(depth.vec)>150){type<-'L'}
+          if(mean(depth.vec)<=150){type<-'L'}
           if(mean(depth.vec)<=40){type<-'L'}
 
           #print(type)
@@ -871,38 +801,27 @@ cut.off.multiple  <-function(mag.var){
           var.sim<- mag.exp.var.v3(efrq.vec = vaf.vec, edep.vec =depth.vec , num=size, type=type)
           var.sim<- var.sim$exp.vat
           #print('done mag')
-         # print(sd(var.sim))
+          # print(sd(var.sim))
 
 
           m <- mean(var.sim) + 1e-6
           vv <- sd(var.sim)
           vmax <- max(var.sim)
-         # print('vars:')
-        #  print(m+3*vv)
-        #  print('depth sd')
-         # print(sd(depth.vec))
-        #  print(ii)
-         # print(stepII.breaks)
-         # print(max(vaf.vec)-min(vaf.vec))
-          ###MARCH 2019: instead of looking at var from stepII breaks, look at var from 95% quantile
-         if(length(vaf.vec)>50 & max(vaf.vec)-min(vaf.vec)>0.05){
-             ### added the second condition to ignore the clusters with all equal vafs.
-             var.check<- var(vaf.vec[-which.max(vaf.vec)[1]])
-           }else{
-            var.check<- stepII.breaks[ii,2]
-            }
 
-          #       if(stepII.breaks[ii,2]>=vmax+vv){i<-(i-1)}#       if(stepII.breaks[ii, 'NumberOfPoints'] == 1 | stepII.breaks[ii,2] < m+vv) {        #okay cluster#       if(stepII.breaks[ii, 'okay'] ==1 | sqrt(stepII.breaks[ii,2])*(1+stepII.breaks[ii, "weights"]) < m+vv) {        #okay cluster
-          #if(stepII.breaks[ii, 'okay'] >0 |stepII.breaks[ii,2] < m+3*vv) {
-          #print(var.check)
-          #print(vaf.vec)
-         # cat(m, vv)
+          if(length(vaf.vec)>50 & max(vaf.vec)-min(vaf.vec)>0.05){
+            ### added the second condition to ignore the clusters with all equal vafs.
+            var.check<- var(vaf.vec[-which.max(vaf.vec)[1]])
+          }else{
+            var.check<- stepII.breaks[ii,2]
+          }
+
+
           var.threshold<- m+2*vv
           #print(var.threshold)
           if(type=='H'){var.threshold<- m+3*vv}
-       #   if(var(vaf.vec)!=0){
-        #  test<-varTest(vaf.vec,sigma.squared = m+3*vv)
-         # }
+          #   if(var(vaf.vec)!=0){
+          #  test<-varTest(vaf.vec,sigma.squared = m+3*vv)
+          # }
           #if(var(vaf.vec)==0){
           #  test<- list(p.value=1)
           #}
@@ -915,9 +834,7 @@ cut.off.multiple  <-function(mag.var){
           if(stepII.breaks[ii, 'okay'] >0 |
              #floor(var.check*10^4)/10^4 <  ceiling((round(m+3*vv,4)+0.00001)*10^4)/10^4) {
              floor(var.check*10^4)/10^4< m+3*vv  ) {
-             #test$p.value>0.05){
-            #print('okay shod:')
-            #print(test)
+
             keep[ii]<-keep[ii]+1
           }#changed to vmax on oct 14 2018
         }
@@ -942,20 +859,6 @@ cut.off.multiple  <-function(mag.var){
     }
     #if(v==i){iii<-TRUE}else{i<-(v-1)}
   }
-
-
-  ### COMMENTED ON JAN 2018
-  # for( i in 1:nrow(str)){
-  #   xel <- x.el.list[[str$step[i]]]     #feb 28
-  #   for(j in 1:nrow(xel)){
-  #     m1 <- mean(data[xel[j,]==1])   #feb 28
-  #     ##changed to sorted. after oc.9#### OCT 30: THis should be changed for OC11 since there is no sorting in that
-  #     if(abs(m1-str[i,1]) < 0.001){
-  #       cutstr<-rbind(cutstr, xel[j,])  ## what's the difference between cutstr and cutstr2????????
-  #     }
-  #   }
-  # }
-
 
   time1 <- as.numeric(Sys.time())
   cat("took ", (time1 - time0), " seconds.\n");
@@ -989,7 +892,7 @@ cut.off.multiple  <-function(mag.var){
 
   #head(t)
 
-
+  t_means= t%>%select(contains(c('vaf','color')))%>%group_by(colors)%>%summarise_all(mean)
   i=1
 
   prob.all=c()
@@ -999,16 +902,26 @@ cut.off.multiple  <-function(mag.var){
     prob.s=c()
     #j=1
     for( j in 1:length(vf)){
-      #ii=1
+      #j is the sample number
 
       probs=c()
       prob=c()
       for(ii in unique(t$colors)){
-        prob=c(prob,dbeta(vf[,j], shape1 = t.1[t.1[,1]==ii,1+(2*j-1)], shape2=t.1[t.1[,1]==ii, 1+2*j]))
+        v=vf[,j]
+        shape1 = t.1[t.1[,1]==ii,1+(2*j-1)]
+        shape2=t.1[t.1[,1]==ii, 1+2*j]
+        clust_mean= t_means[t_means$colors==ii, j+1]%>%pull()
+
+        prob_flag= ifelse(v<clust_mean, TRUE, FALSE )
+
+        pp=pbeta(v, shape1, shape2 , lower.tail = prob_flag)
+
+        prob= c(prob, round(pp,3))
+        #prob=c(prob,dbeta(vf[,j], shape1 = t.1[t.1[,1]==ii,1+(2*j-1)], shape2=t.1[t.1[,1]==ii, 1+2*j]))
 
       }
       prob.s=rbind(prob.s, prob)
-      prob.s=round(apply(prob.s, 2, min),2)
+      prob.s=apply(prob.s, 2,min )
     }
     prob.all=rbind(prob.all, prob.s)
   }
@@ -1021,22 +934,13 @@ cut.off.multiple  <-function(mag.var){
 
 
 
-
   results<-list(str=str, cutclust=cutstr, cutclust2=cutstr2, colors=colors,probs=final.probs ,final.data=final.data)
   return(results)
 }
 
 
-
-#' MAG single
-#'
-#' This function is used to perform clustering on only one sample.
-#'
-#' @param prep.data Preproccessed dataframe of the data.
-#'
-#' @return List of data files. List of matrixs of each step of the hierarchical clustering. Sorted sample. A dataframe of the variance and mean frequency of samples at each clustering step.
-#'
-#' @export
+########################################
+########################################          MAG SINGLE V3
 mag.single<- function(prep.data){
 
   if(is.null(prep.data$vafs$ID)){ return(print('Run mag.prepdata on the data'))}
@@ -1194,7 +1098,7 @@ mag.single<- function(prep.data){
     ####################### faster version? :
     # okay<- apply(x.elements, 1, function(x) sum(paste(x, collapse = '')%in%x.el.first.okay))
     #print(s)
-   # print('1.8')
+    # print('1.8')
     # SEP 19: commented the next 7 lines! I just need one line and use el.rm to update the okay.
     #okay<- apply(x.elements, 1, function(x) #dec 6 2018
     #{y=paste(as.numeric(x), collapse = '');   # APRIL 11 2019 added the numeric
@@ -1293,14 +1197,6 @@ mag.single<- function(prep.data){
 }
 
 
-#' Single Sample Cut Off
-#'
-#' This function is used to find the best cut off and the cluster assignment on single sample.
-#'
-#' @param mag.output This is the output of the mag.single function
-#' @return A list of R files. The main output is final.data which has the samples and the cluster assingment in a dataframe.
-#'
-#' @export
 cut.off.single <- function(mag.output){
   time0 <- as.numeric(Sys.time())
   #print(dim(mag.output))
@@ -1356,178 +1252,180 @@ cut.off.single <- function(mag.output){
 
 
   {
-  while(flag == FALSE){
-    #print(flag)
-   # print('umad?')
-   # print(flag)
-    #print('enter')
-    #print(i); flush.console();
-    v <- i
+    while(flag == FALSE){
+      #print(flag)
+      # print('umad?')
+      # print(flag)
+      #print('enter')
+      #print(i); flush.console();
+      v <- i
 
-    ############
-    ## I need to use x.el to get the breaks, because using StepI would cause problem
-    ## in identical clusters and mutations.
-    ## TO FIX THIS I JUST KEPT MY ORIGINAL METHOD -
-    ## I just duplicated the rows in the case of identical mutations
-    ## because there should be onlytwo rows at each step
-    ## and having only 1 row means identical clusters.
-    ############
+      ############
+      ## I need to use x.el to get the breaks, because using StepI would cause problem
+      ## in identical clusters and mutations.
+      ## TO FIX THIS I JUST KEPT MY ORIGINAL METHOD -
+      ## I just duplicated the rows in the case of identical mutations
+      ## because there should be onlytwo rows at each step
+      ## and having only 1 row means identical clusters.
+      ############
 
-    stepI <- var.mean[var.mean$step==i,]
-    stepI.x.el <- mag.output$x.el[[i]]
-    stepI.x.el<- as.data.frame(as.matrix(stepI.x.el))
+      stepI <- var.mean[var.mean$step==i,]
+      stepI.x.el <- mag.output$x.el[[i]]
+      stepI.x.el<- as.data.frame(as.matrix(stepI.x.el))
 
-    stepI.x.el.step <- stepI.x.el[nrow(stepI.x.el), ]  #Only look at the most recent cluster
+      stepI.x.el.step <- stepI.x.el[nrow(stepI.x.el), ]  #Only look at the most recent cluster
 
-    stepII <- var.mean[var.mean$step==i-1, ]  ## previous step
-    #stepII$var<-stepII$var,)
-    if(i>1){
-      stepII.x.el <- mag.output$x.el[[i-1]]
-      stepII.x.el<- as.data.frame(as.matrix(stepII.x.el))
-    }
-    if(i==1){
-      stepII.x.el <- mag.output$x.el.preprocess
-      stepII.x.el<- as.data.frame(as.matrix(stepII.x.el))
-
-    }
-    #print("II")
-    #print(stepII.x.el)
-
-    #if( !(id.sum%in%id.ok)){    ###this means if the division on this step is not happening on the "ok" clusters. so the okay clusters should still exist in the temp.
-    #if(sum(abs(id.ok-id.sum)<0.1)==0){
-    #newtemp<-temp[!(temp$id%in%id.ok),]
-    #if(!id.I%in%id.ok){
-    temp.points <- rbind(temp.points, c(i, ok.points));
-    temp.step <- rbind(temp.step, c(i, stepI.x.el.step));
-    temp.point.step <- rbind(temp.point.step, c(i, sum(ok.points & stepI.x.el.step)))
-
-
-    #print(ok.points)
-    #print(sum(ok.points & stepI.x.el.step))
-    if(sum(ok.points & stepI.x.el.step) == 0){     ###meaning stepI.x.el is not in ok.points
-
-      #stepII.breaks<- stepII[!stepII$id%in%stepI,]
-      #print("stepI ")
-      #print(stepI )
-      #print("stepII ")
-      #print(stepII )
-      #stepII.breaks <- setdiff(stepII[,-c(4,7)], stepI[,-c(4,7)])
-      stepII.breaks <- dplyr::setdiff(stepII[,-4], stepI[,-4])   #dec 6 2018
-      if(nrow(stepII.breaks)==1){
-        #print("why did this happen????")
-        stepII.breaks <- rbind(stepII.breaks, stepII.breaks)
+      stepII <- var.mean[var.mean$step==i-1, ]  ## previous step
+      #stepII$var<-stepII$var,)
+      if(i>1){
+        stepII.x.el <- mag.output$x.el[[i-1]]
+        stepII.x.el<- as.data.frame(as.matrix(stepII.x.el))
       }
-      stepII.num <- stepII[, 4]
-      stepII.breaks <- cbind(stepII.breaks, stepII[1:2,4])   #just add the step number back to the matrix
-      stepII.breaks.x.el <- dplyr::setdiff(stepII.x.el, stepI.x.el)
+      if(i==1){
+        stepII.x.el <- mag.output$x.el.preprocess
+        stepII.x.el<- as.data.frame(as.matrix(stepII.x.el))
 
-      #for( ii in 1:dim(newtemp)[1]){              ###stepII.breaks always has 2 rows
-      for(ii in 1:2){
-        #sample.sim <- cluster.sim(edep=depth, efrq=stepII.breaks[ii,1], shape=shape, n=10000)
-        var.sim <- c()
-        size <- ifelse(stepII.breaks$NumberOfPoints[ii]<5, 5, stepII.breaks$NumberOfPoints[ii])
-        #print(size)
-        #for(j in 1:500){
-        # sample.sim.2 <- sample.sim[sample(1:10000, size=size),]   #temp[1,3]
-        #  var.sim <- c(var.sim, var(sample.sim.2[, 4]))
-        #}
-        #var.sim<- mag.exp.var.v2(efrq=stepII.breaks[ii,1], edep=stepII.breaks[ii,'depth'], num=size)
+      }
+      #print("II")
+      #print(stepII.x.el)
 
-        #print(stepII.breaks.x.el)
-
-        vafs<- mag.output$vaf.sorted$vaf.1[as.matrix(stepII.breaks.x.el[ii,])]                 #### APRIL 11 2019
-        depths<- mag.output$depth.sorted$depth.1[as.matrix(stepII.breaks.x.el[ii,])]
-
-        var.sim<- mag.exp.var.v3(efrq.vec = (vafs) , edep.vec = (depths) , num=size)    #### APRIL 11 2019
-        var.sim<- var.sim$exp.vat
-        #print(var.sim)
-
-        ###MAY 2019:
-        if(length(vafs)>20 & max(vafs)-min(vafs)>0.05){
-          #print('UMAD TOOOOOOOOO')
-          ### added the second condition to ignore the clusters with all equal vafs.
-          var.check<- var(vafs[-which.max(vafs)[1]])
-        }else{
-          var.check<- stepII.breaks[ii,2]}
+      #if( !(id.sum%in%id.ok)){    ###this means if the division on this step is not happening on the "ok" clusters. so the okay clusters should still exist in the temp.
+      #if(sum(abs(id.ok-id.sum)<0.1)==0){
+      #newtemp<-temp[!(temp$id%in%id.ok),]
+      #if(!id.I%in%id.ok){
+      temp.points <- rbind(temp.points, c(i, ok.points));
+      temp.step <- rbind(temp.step, c(i, stepI.x.el.step));
+      temp.point.step <- rbind(temp.point.step, c(i, sum(ok.points & stepI.x.el.step)))
 
 
+      #print(ok.points)
+      #print(sum(ok.points & stepI.x.el.step))
+      if(sum(ok.points & stepI.x.el.step) == 0){     ###meaning stepI.x.el is not in ok.points
 
+        #stepII.breaks<- stepII[!stepII$id%in%stepI,]
+        #print("stepI ")
+        #print(stepI )
+        #print("stepII ")
+        #print(stepII )
+        #stepII.breaks <- setdiff(stepII[,-c(4,7)], stepI[,-c(4,7)])
+        stepII.breaks <- dplyr::setdiff(stepII[,-4], stepI[,-4])   #dec 6 2018
+        if(nrow(stepII.breaks)==1){
+          #print("why did this happen????")
+          stepII.breaks <- rbind(stepII.breaks, stepII.breaks)
+        }
+        stepII.num <- stepII[, 4]
+        stepII.breaks <- cbind(stepII.breaks, stepII[1:2,4])   #just add the step number back to the matrix
+        stepII.breaks.x.el <- dplyr::setdiff(stepII.x.el, stepI.x.el)
 
-        m <- mean(var.sim, na.rm=T) + 1e-6
-        vv <- sd(var.sim, na.rm=T)
-        vmax <- max(var.sim, na.rm=T)
-        #temp.mv <- rbind(temp.mv, c(i, ii, m, vv, vmax, stepII.breaks[ii,2]))
+        #for( ii in 1:dim(newtemp)[1]){              ###stepII.breaks always has 2 rows
+        for(ii in 1:2){
+          #sample.sim <- cluster.sim(edep=depth, efrq=stepII.breaks[ii,1], shape=shape, n=10000)
+          var.sim <- c()
+          size <- ifelse(stepII.breaks$NumberOfPoints[ii]<5, 5, stepII.breaks$NumberOfPoints[ii])
+          #print(size)
+          #for(j in 1:500){
+          # sample.sim.2 <- sample.sim[sample(1:10000, size=size),]   #temp[1,3]
+          #  var.sim <- c(var.sim, var(sample.sim.2[, 4]))
+          #}
+          #var.sim<- mag.exp.var.v2(efrq=stepII.breaks[ii,1], edep=stepII.breaks[ii,'depth'], num=size)
 
-        #if(stepII.breaks[ii, 'NumberOfPoints'] < 11 | stepII.breaks[ii,2]*(1+stepII.breaks[ii, "weights"]) < m+vv) {        #okay cluster
-        #if(stepII.breaks[ii, 'okay'] ==1 | (stepII.breaks[ii,2])*(1+stepII.breaks[ii, "weights"]) < m+vv) {        #okay cluster   APRIL 15
-       # print(stepII.breaks)
-        #print(vv)
-        if(stepII.breaks[ii, 'okay'] >0 |
-          # stepII.breaks[ii,2] < m+3*vv ) {   #dec 6 2018
-          var.check<m+3*vv){
-          str.f <- c(str.f, stepII.breaks[ii,1])
-          #print("here")
-          #print(str)
-          str <- rbind(str, stepII.breaks[ii,])
           #print(stepII.breaks.x.el)
-          cutstr2 <- rbind(cutstr2, stepII.breaks.x.el[ii,])
-          #print(str)
 
-          #id.ok<-c(id.ok, stepII.breaks$id[ii])
-          ok.points <- ok.points + stepII.breaks.x.el[ii,]
-          #print(ok.points)
+          vafs<- mag.output$vaf.sorted$vaf.1[as.matrix(stepII.breaks.x.el[ii,])]                 #### APRIL 11 2019
+          depths<- mag.output$depth.sorted$depth.1[as.matrix(stepII.breaks.x.el[ii,])]
+
+          var.sim<- mag.exp.var.v3(efrq.vec = (vafs) , edep.vec = (depths) , num=size)    #### APRIL 11 2019
+          var.sim<- var.sim$exp.vat
+          #print(var.sim)
+
+          ###MAY 2019:
+          if(length(vafs)>20 & max(vafs)-min(vafs)>0.05){
+            #print('UMAD TOOOOOOOOO')
+            ### added the second condition to ignore the clusters with all equal vafs.
+            var.check<- var(vafs[-which.max(vafs)[1]])
+          }else{
+            var.check<- stepII.breaks[ii,2]}
+
+
+
+
+          m <- mean(var.sim, na.rm=T) + 1e-6
+          vv <- sd(var.sim, na.rm=T)
+          vmax <- max(var.sim, na.rm=T)
+          #temp.mv <- rbind(temp.mv, c(i, ii, m, vv, vmax, stepII.breaks[ii,2]))
+
+          #if(stepII.breaks[ii, 'NumberOfPoints'] < 11 | stepII.breaks[ii,2]*(1+stepII.breaks[ii, "weights"]) < m+vv) {        #okay cluster
+          #if(stepII.breaks[ii, 'okay'] ==1 | (stepII.breaks[ii,2])*(1+stepII.breaks[ii, "weights"]) < m+vv) {        #okay cluster   APRIL 15
+          # print(stepII.breaks)
+          #print(vv)
+          if(stepII.breaks[ii, 'okay'] >0 |
+             # stepII.breaks[ii,2] < m+3*vv ) {   #dec 6 2018
+             var.check<m+3*vv){
+            str.f <- c(str.f, stepII.breaks[ii,1])
+            #print("here")
+            #print(str)
+            str <- rbind(str, stepII.breaks[ii,])
+            #print(stepII.breaks.x.el)
+            cutstr2 <- rbind(cutstr2, stepII.breaks.x.el[ii,])
+            #print(str)
+
+            #id.ok<-c(id.ok, stepII.breaks$id[ii])
+            ok.points <- ok.points + stepII.breaks.x.el[ii,]
+            #print(ok.points)
+          }
+        }
+      }
+
+      ###stop condition
+      #if(abs(sum(str$id)-id.max)<0.000001){flag<-TRUE}else{i<-(v-1)}
+      #print(i)      ###new condition: sum of id.okay== id.max
+
+      #if(abs(sum(str$id)-id.max)<0.000001){flag<-TRUE}else{i<-(v-1)}
+
+      ####new condition    oct 31
+      #print("LAST PRINT")
+      if(sum(ok.points>1)>0){
+        print("ERROR")
+      }
+      if(sum(ok.points) == n){
+        flag<-TRUE
+      } else {
+        i<-(v-1)
+      }
+      #if(v==i){iii<-TRUE}else{i<-(v-1)}
+    }
+
+    for( i in 1:nrow(str)){
+      #print(i)
+      if(str$step[i]!=0){
+        xel <- mag.output$x.el[[str$step[i]]]}
+      if(str$step[i]==0){
+        xel <- mag.output$x.el.preprocess}
+
+      #print(xel)
+      for(j in 1:nrow(xel)){
+        m1 <- mean(mag.output$freq.s[xel[j,]==1])    ##changed to sorted. after oc.9#### OCT 30: THis should be changed for OC11 since there is no sorting in that
+        if(abs(m1-str[i,1]) < 0.001){
+          cutstr<-rbind(cutstr, xel[j,])  ## what's the difference between cutstr and cutstr2????????
         }
       }
     }
 
-    ###stop condition
-    #if(abs(sum(str$id)-id.max)<0.000001){flag<-TRUE}else{i<-(v-1)}
-    #print(i)      ###new condition: sum of id.okay== id.max
 
-    #if(abs(sum(str$id)-id.max)<0.000001){flag<-TRUE}else{i<-(v-1)}
-
-    ####new condition    oct 31
-    #print("LAST PRINT")
-    if(sum(ok.points>1)>0){
-      print("ERROR")
-    }
-    if(sum(ok.points) == n){
-      flag<-TRUE
-    } else {
-      i<-(v-1)
-    }
-    #if(v==i){iii<-TRUE}else{i<-(v-1)}
+    time1 <- as.numeric(Sys.time())
+    cat("took ", (time1 - time0), " seconds.\n");
+    #print(cutstr)
+    colors<-colSums(cutstr*c(1:nrow(cutstr)))+1
   }
-
-  for( i in 1:nrow(str)){
-    #print(i)
-    if(str$step[i]!=0){
-      xel <- mag.output$x.el[[str$step[i]]]}
-    if(str$step[i]==0){
-      xel <- mag.output$x.el.preprocess}
-
-    #print(xel)
-    for(j in 1:nrow(xel)){
-      m1 <- mean(mag.output$freq.s[xel[j,]==1])    ##changed to sorted. after oc.9#### OCT 30: THis should be changed for OC11 since there is no sorting in that
-      if(abs(m1-str[i,1]) < 0.001){
-        cutstr<-rbind(cutstr, xel[j,])  ## what's the difference between cutstr and cutstr2????????
-      }
-    }
-  }
-
-
-  time1 <- as.numeric(Sys.time())
-  cat("took ", (time1 - time0), " seconds.\n");
-  #print(cutstr)
-  colors<-colSums(cutstr*c(1:nrow(cutstr)))+1
-}
 
   final.data<-cbind(mag.output$vaf.sorted,colors)
   #print('hi')
-#  print(final.data)
+  #  print(final.data)
 
   #PROBS:
   t=final.data
+
+
   t.1=c()
   for(i in 1:(ncol(t)-2)){
     temp=c()
@@ -1542,23 +1440,14 @@ cut.off.single <- function(mag.output){
       temp=rbind(temp,c(j, a, b))
     }
     colnames(temp)=c('colors',paste0('alpha.',i), paste0('beta.',i))
-   # print(temp)
-
-    t.1=cbind(t.1,temp[,-1, drop=FALSE])
-    #print(t.1)
+    t.1=cbind(t.1,temp[,-1, drop=F])
   }
   t.1=cbind(unique(t$colors), t.1)
-  #print('inja/?')
-  #print(t.1)
-  #print(class(t.1))
-
-  #print(colnames(t.1))
   colnames(t.1)[1]='colors'
 
   #head(t)
 
-
-
+  t_means= t%>%select(contains(c('vaf','color')))%>%group_by(colors)%>%summarise_all(mean)
   i=1
 
   prob.all=c()
@@ -1568,16 +1457,26 @@ cut.off.single <- function(mag.output){
     prob.s=c()
     #j=1
     for( j in 1:length(vf)){
-      #ii=1
+      #j is the sample number
 
       probs=c()
       prob=c()
       for(ii in unique(t$colors)){
-        prob=c(prob,dbeta(vf[,j], shape1 = t.1[t.1[,1]==ii,1+(2*j-1)], shape2=t.1[t.1[,1]==ii, 1+2*j]))
+        v=vf[,j]
+        shape1 = t.1[t.1[,1]==ii,1+(2*j-1)]
+        shape2=t.1[t.1[,1]==ii, 1+2*j]
+        clust_mean= t_means[t_means$colors==ii, j+1]%>%pull()
+
+        prob_flag= ifelse(v<clust_mean, TRUE, FALSE )
+
+        pp=pbeta(v, shape1, shape2 , lower.tail = prob_flag)
+
+        prob= c(prob, round(pp,3))
+        #prob=c(prob,dbeta(vf[,j], shape1 = t.1[t.1[,1]==ii,1+(2*j-1)], shape2=t.1[t.1[,1]==ii, 1+2*j]))
 
       }
       prob.s=rbind(prob.s, prob)
-      prob.s=round(apply(prob.s, 2, min),2)
+      prob.s=apply(prob.s, 2,min )
     }
     prob.all=rbind(prob.all, prob.s)
   }
@@ -1598,17 +1497,9 @@ cut.off.single <- function(mag.output){
 
 
 
-
-
 ####################################
 ####################################        MAG RUN
 
-
-#' MAG run
-#'
-#' The main function of the package. After performing the preprocessing this function performs all steps of clustereing and finding the best structure and grouping of mutations.
-#'
-#' @export
 mag.single.run<- function(input.data, fold=F){
   data.prep<- mag.prepdata(input.data)
   purity<- 1
@@ -1637,12 +1528,7 @@ mag.single.run<- function(input.data, fold=F){
   return(res)
 }
 
-
-#' MAG run
-#'
-#' The main function of the package. After performing the preprocessing this function performs all steps of clustereing and finding the best structure and grouping of mutations.
-#'
-#' @export
+# APRIL 2020: added fold.
 mag.multiple.run<- function(input.data, reduce=T, threshold=0.03, fold= F){
   prep= mag.prepdata(input.data)
   purity=c()
@@ -1667,9 +1553,10 @@ mag.multiple.run<- function(input.data, reduce=T, threshold=0.03, fold= F){
   purity=purity[c(-1, -length(purity))]
 
   fs=which(sum1[,-c(1, ncol(sum1))]>0.5, arr.ind = T)
-  #i=1
+  print('what')
   print(purity)
-  if(fold==F & any(purity>1)){purity='There are clusters with frequency higher than 0.5- consider folding.'}
+  if(fold==F & any(purity>1)){purity='There are clusters with frequency higher than 0.5- consider folding.'
+  print(purity)}
 
   if(fold==T & nrow(fs)>0){
     fold.prep= prep
@@ -1714,56 +1601,91 @@ mag.multiple.run<- function(input.data, reduce=T, threshold=0.03, fold= F){
 
 
 
-
 ####################################
 ####################################        CNV ASSIGNMENT
 
-# cn.input should be a list of cns, for each sample. Each row of each of the cn.files should correspond to the cn of that region at each sample.
-#cn.input.1=data.frame(vaf=c(0.1,0.15,0.3,0.6,0.9), cn=c(3,2.5,2.5,3,3.1))
-#cn.input.2=data.frame(vaf=c(0.1,0.15,0.3,0.6,0.6), cn=c(3,2,2.5,3,2))
-#cn.input.3=data.frame(vaf=c(0.1,0.15,0.35,0.6,0.6), cn=c(3,2,2,3,2))
-#cn.input.4=data.frame(vaf=c(0.1,0.15,0.35,0.6,0.9), cn=c(3,2,2.5,3.5,3.1))
-#cn.input=list(cn.input.1,cn.input.2,cn.input.3,cn.input.4)
 
-#' MAG CNV assignment
-#'
-#' Assignes the reported CNVs to the identified clusters.
-#'
-#' @export
-mag.cn.call=function(cut, cn.input){
+
+
+## determine the best cluster of each SNV
+## input:   cl.cnv is the output from mag.cn.block()
+##
+mag.cn.call.tcn=function(cut, cn.input, cl.cnv, upper=10){
   cn.output=c()
   temp=c()
   temp2=data.frame(cut$final.data%>%group_by(colors)%>%summarise_all(funs(mean)))
 
-  for(m in 1:nrow(cn.input[[1]])){
-    res.m=c()
-    for(c in unique(temp2$colors)){
-      res.c=0
-      for(s in 1:length(cn.input)){
-        res=c()
-        cn.sample= cn.input[[s]]
-        cn.tmp=cn.sample$cn[m]
-        cn.vaf=cn.sample$vaf[m]
-        for(k in 1:(10*cn.tmp)){
-          vaf.sc=temp2[temp2$colors==c,s+1]
-          res=rbind(res,c(abs(cn.vaf-2*k*vaf.sc/cn.tmp),k))
+  for(m in 1:nrow(cn.input[[1]])){  ## each snv in CNV region
+    res=c()
+    for(c in unique(temp2$colors)){  ## each cluster containing a snv
+      for(s in 1:length(cn.input)){  ## each sample
+        cn.sample=cn.input[[s]][m, ]
+        cn.tmp=cn.sample$cn
+        cn.vaf=cn.sample$vaf
+        cn.blk=cn.sample$block
+        blk.cl = cl.cnv[which(cl.cnv$block == cn.blk), 'cl.cnv']
+        vaf.tcn=temp2[temp2$colors==blk.cl, s+1]
+        for(k in 1:max(min(upper, cn.tmp), 1)){
+          vaf.sc=temp2[temp2$colors==c, s+1]
+          exp.vaf=2*k*vaf.sc/(2*vaf.tcn*cn.tmp+(1-2*vaf.tcn)*2)
+          res=rbind(res,c(abs(cn.vaf-exp.vaf),s,c,blk.cl,k))
         }
-        res.c[1]=res.c[1]+res[which.min(res[,1]),1]
-        res.c=cbind(res.c, res[which.min(res[,1]),2])
-        colnames(res.c)[ncol(res.c)]=paste0('k.',s )
       }
-      res.m=rbind(res.m, c(res.c, 'color'=c))
-      colnames(res.m)=c(colnames(res.c), 'color')
     }
-    cn.output=rbind(cn.output,res.m[which.min(res.m[,1]),] )
-    colnames(cn.output)[c(1,ncol(cn.output))]=c('error','cluster')
-
+    colnames(res)=c('error', 'sample', 'cl.snv', 'cl.cnv', 'k')
+    agg = aggregate(error ~ cl.snv + cl.cnv + k, data=res, 'sum')
+    best = agg[which.min(agg$error), ]
+    cn.output = rbind(cn.output, best)
   }
   if(nrow(cut$final.data)<nrow(cn.input[[1]])){
     print('Warning: number of CNV events is greater than SNVs. CNV assignment may not be reliable.')}
   return(data.frame(cn.output))
 }
 
+## determine the best cluster a CNV belongs to
+## it is the majority vote of all SNVs in a CNV block
+## input: cut is from mag
+## input: cn.input is a list of data frames.
+## each data frame has 3 columns: vaf, cn that is tcn, and block that is the CNV block ID.
+## input: upper is the max cnv it searches
+## output: a data frame with 3 columns: cluster a cnv belongs to, block ID of a CNV, number of SNVs that support the CNV cluster assignment
+mag.cn.block=function(cut, cn.input, upper=10){
+  cn.output=c()
+  temp=c()
+  temp2=data.frame(cut$final.data%>%group_by(colors)%>%summarise_all(funs(mean)))
+
+  for(m in 1:nrow(cn.input[[1]])){  ## each snv in CNV region
+    res=c()
+    for(c in unique(temp2$colors)){  ## each cluster containing a snv
+      for(r in unique(temp2$colors)){  ## each cluster containing a cnv region
+        for(s in 1:length(cn.input)){  ## each sample
+          cn.sample=cn.input[[s]][m, ]
+          cn.tmp=cn.sample$cn
+          cn.blk=cn.sample$block
+          cn.vaf=cn.sample$vaf
+          for(k in 1:max(min(upper, cn.tmp), 1)){
+            vaf.sc=temp2[temp2$colors==c, s+1]
+            vaf.tcn=temp2[temp2$colors==r, s+1]
+            exp.vaf=2*k*vaf.sc/(2*vaf.tcn*cn.tmp+(1-2*vaf.tcn)*2)
+            res=rbind(res,c(abs(cn.vaf-exp.vaf),s,c,r,k,cn.blk))
+          }
+        }
+      }
+    }
+    colnames(res)=c('error', 'sample', 'cl.snv', 'cl.cnv', 'k', 'block')
+    agg = aggregate(error ~ cl.snv + cl.cnv + k + block, data=res, 'sum')
+    best = agg[which.min(agg$error), ]
+    cn.output = rbind(cn.output, best)
+  }
+  block.best.cl = do.call(rbind, lapply(split(cn.output, cn.output$block), function(x) {
+    a = aggregate(cl.snv ~ cl.cnv + block, data=x, 'length')
+    a[which.max(a$cl.snv), ]
+  }))
+
+  if(nrow(cut$final.data)<nrow(cn.input[[1]])){
+    print('Warning: number of CNV events is greater than SNVs. CNV assignment may not be reliable.')}
+  return(block.best.cl)
+}
 
 
 
