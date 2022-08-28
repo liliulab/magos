@@ -2,7 +2,7 @@
 
 S3method(cut,off.multiple)
 S3method(cut,off.single)
-export(mag.cn.call)
+export(mag.cn.call.tcn)
 export(mag.multiple)
 export(mag.multiple.run)
 export(mag.prepdata)
