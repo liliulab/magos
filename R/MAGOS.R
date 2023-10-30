@@ -311,7 +311,7 @@ mag.reduce.graph<-function(prep.data,x.el=matrix(), n=-100, threshold=0.03){
       #tempMatLoop[tempMatLoop.2] <- initial.full[1, ]
       tempMatLoop[tempMatLoop.2] <- initial.full
 
-      mat.loop<-t(tempMatLoop)
+      mat.loop<-Matrix::t(tempMatLoop)
       mat.loop.g<- mat.loop
       mat.loop.g[mat.loop <= optim.value.bound]<- 1
       mat.loop.g[mat.loop> optim.value.bound]<- 0
@@ -368,7 +368,7 @@ mag.reduce.graph<-function(prep.data,x.el=matrix(), n=-100, threshold=0.03){
   #tempMatLoop[tempMatLoop.2] <- initial.rems[1, ]
   tempMatLoop[tempMatLoop.2] <- initial.rems
 
-  mat.loop<-t(tempMatLoop)
+  mat.loop<-Matrix::t(tempMatLoop)
   #diag(mat.loop) <- 1e5;
   mat.loop.g<- mat.loop
   mat.loop.g[mat.loop <= optim.value.bound]<- 1
@@ -514,7 +514,7 @@ mag.multiple<- function(prep.data,x.el.cut=data.frame()) {
   tempMatLoop<-Matrix(1000000, nrow=l, ncol=l, sparse = T)  #may 6th   DEC 2018: added sparse
   tempMatLoop.2<-lower.tri(diag(1000000, nrow=l, ncol=l))
   tempMatLoop[tempMatLoop.2] <- initial.1[1, ]
-  mat.loop<-t(tempMatLoop)
+  mat.loop<-Matrix::t(tempMatLoop)
   #diag(mat.loop) <- 1e5;
 
 
