@@ -540,8 +540,8 @@ mag.multiple<- function(prep.data,x.el.cut=data.frame()) {
     cat(s, '...', nrow(x.elements), '...\n'); flush.console();
 
     x.values[s]<-min(mat.loop)
-    el1<-which(mat.loop==min(mat.loop), arr.ind = T)[1,1]
-    el2<-which(mat.loop==min(mat.loop), arr.ind = T)[1,2]
+    el1<-Matrix::which(mat.loop==min(mat.loop), arr.ind = T)[1,1]
+    el2<-Matrix::which(mat.loop==min(mat.loop), arr.ind = T)[1,2]
     el.rm<-c(el1,el2)
     params<-c(params, par.1.loop[el1,el2])#, par.2.loop[el1,el2]))
 
@@ -1070,8 +1070,8 @@ mag.single<- function(prep.data){
 
     #print(min(mat.loop))
     x.values[s]<-min(mat.loop)
-    el1<-which(mat.loop==min(mat.loop), arr.ind = T)[1,1]
-    el2<-which(mat.loop==min(mat.loop), arr.ind = T)[1,2]
+    el1<-Matrix::which(mat.loop==min(mat.loop), arr.ind = T)[1,1]
+    el2<-Matrix::which(mat.loop==min(mat.loop), arr.ind = T)[1,2]
     el.rm<-c(el1,el2)
     # print("Remove ina")
     # print(el.rm)
