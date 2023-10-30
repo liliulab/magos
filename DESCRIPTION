@@ -12,5 +12,6 @@ LazyData: true
 Imports:
   dplyr,
   igraph,
+  plyr,
   Matrix
 RoxygenNote: 7.0.2
