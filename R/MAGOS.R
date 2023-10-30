@@ -1534,6 +1534,7 @@ mag.single.run<- function(input.data, fold=F){
 
 # APRIL 2020: added fold.
 mag.multiple.run<- function(input.data, reduce=T, threshold=0.03, fold= F){
+  cat('*******');flush.console()
   prep= mag.prepdata(input.data)
   purity=c()
 
