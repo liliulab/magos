@@ -14,4 +14,4 @@ Imports:
   igraph,
   plyr,
   Matrix
-RoxygenNote: 7.0.2
+RoxygenNote: 7.2.3
